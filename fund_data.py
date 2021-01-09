@@ -49,7 +49,7 @@ def main():
     suffix_url = "&sort_type=3"
     temp_url = prefix_url + "1" + "&txtitle=" + trans_str + suffix_url
     page_num = get_page_num(url=temp_url)
-    filewrite.write('课题\t负责人\t单位\t金额\t类型\t学科代码\t开始时间\n')
+    filewrite.write('课题\t负责人\t单位\t金额\t类型\t学科代码\t开始时间\t具体链接\n')
     for p in range(0, page_num):
         temp_url = prefix_url + str(p + 1) + "&txtitle=" + trans_str + suffix_url
         r = requests.get(url=temp_url, headers=headers)
@@ -59,14 +59,16 @@ def main():
             temp_conts = [i.get_text() for i in all_cont[i].find_all('p')]
             temp_dict_conts = extract_cont(temp_conts)
             temp_dict_conts['标题'] = (all_cont[i].find('a', class_=['ms-link']).get_text())
-            line_cont = '{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(
+            temp_dict_conts['具体链接'] = all_cont[i].find('a', class_ = ['ms-link']).get('href')
+            line_cont = '{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(
                 temp_dict_conts['标题'],
                 temp_dict_conts['负责人'],
                 temp_dict_conts['单位'],
                 temp_dict_conts['金额'],
                 temp_dict_conts['类型'],
                 temp_dict_conts['学科代码'],
-                temp_dict_conts['开始时间'])
+                temp_dict_conts['开始时间'],
+                temp_dict_conts['具体链接'])
             filewrite.write(line_cont + "\n")
     filewrite.close()
 
